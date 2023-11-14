@@ -1,8 +1,9 @@
-import NextAuth from 'next-auth';
-import { PrismaAdapter } from '@next-auth/prisma-adapter';
-import GitHubProvider from "next-auth/providers/github";
-import GoogleProvider from "next-auth/providers/google"
-import prisma from '../../../lib/prisma';
+import NextAuth from 'next-auth'
+import { PrismaAdapter } from '@next-auth/prisma-adapter'
+import GitHubProvider from 'next-auth/providers/github'
+import GoogleProvider from 'next-auth/providers/google'
+import prisma from '../../../lib/prisma'
+import { log } from 'console'
 
 export default NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -12,22 +13,24 @@ export default NextAuth({
       clientSecret: process.env.GOOGLE_SECRET ?? '',
       authorization: {
         params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code"
-        }
-      }
+          prompt: 'consent',
+          access_type: 'offline',
+          response_type: 'code',
+        },
+      },
     }),
-    GitHubProvider({
-      clientId: process.env.GITHUB_ID ?? '',
-      clientSecret: process.env.GITHUB_SECRET ?? '',
-    }),
+    // GitHubProvider({
+    //   clientId: process.env.GITHUB_ID ?? '',
+    //   clientSecret: process.env.GITHUB_SECRET ?? '',
+    // }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async session({ session, user }) {
-      session.user.id = user.id;
-      return session;
+      console.log(session, user)
+
+      session.user.id = user.id
+      return session
     },
   },
-});
+})
